@@ -1,37 +1,67 @@
 import streamlit as st
 
-st.title("🎓 Student Result & Feedback App")
+st.title("📊 Smart Student Performance Analyzer")
 
-name = st.text_input("Student Name")
+name = st.text_input("Enter Student Name")
 
-language = st.selectbox(
-    "Select Medium",
-    ["English", "Tamil", "Telugu", "Hindi"]
-)
+medium = st.selectbox("Select Language / Medium", ["English Medium", "Tamil Medium"])
 
-st.subheader("Enter Marks (out of 100)")
+num_subjects = st.selectbox("Number of Subjects", [5, 6])
+
+subjects = []
+if medium == "English Medium":
+    subjects = ["Math", "Science", "English", "Computer", "Social"]
+else:
+    subjects = ["Tamil", "English", "Math", "Science", "Social"]
+
+if num_subjects == 6:
+    subjects.append("Optional Subject")
 
 marks = []
-for i in range(1, 6):
-    marks.append(st.number_input(f"Subject {i}", 0, 100))
+for sub in subjects:
+    mark = st.number_input(f"Enter marks for {sub}", min_value=0, max_value=100)
+    marks.append(mark)
 
-if st.button("Calculate Result"):
+if st.button("Analyze Performance"):
     total = sum(marks)
-    percentage = total / 5
+    max_marks = len(subjects) * 100
+    percentage = (total / max_marks) * 100
+    average = total / len(subjects)
 
-    if min(marks) >= 40:
-        result = "PASS ✅"
-        feedback = "Well done! Keep learning and improving 👍"
-        tips = "Revise daily and practice more problems."
+    # Pass / Fail
+    if average >= 40:
+        status = "PASS ✅"
     else:
-        result = "FAIL ❌"
-        feedback = "Don’t give up. Improvement is possible 💪"
-        tips = "Focus on weak subjects and ask doubts."
+        status = "FAIL ❌"
 
-    st.success(f"Name: {name}")
-    st.info(f"Medium: {language}")
-    st.write(f"Total Marks: {total}")
-    st.write(f"Percentage: {percentage}%")
-    st.write(f"Result: {result}")
-    st.write(f"Feedback: {feedback}")
-    st.write(f"Tips: {tips}")
+    # Grade, Feedback & Tips
+    if average >= 90:
+        grade = "A"
+        feedback = "Outstanding performance 🌟"
+        tips = "Keep challenging yourself with advanced topics."
+    elif average >= 75:
+        grade = "B"
+        feedback = "Very good 👍"
+        tips = "Be consistent to reach excellence."
+    elif average >= 60:
+        grade = "C"
+        feedback = "Good effort 📘"
+        tips = "Practice weak subjects regularly."
+    elif average >= 40:
+        grade = "D"
+        feedback = "Needs improvement ⚠️"
+        tips = "Revise basics and manage time better."
+    else:
+        grade = "F"
+        feedback = "Poor performance ❌"
+        tips = "Seek help and focus on fundamentals."
+
+    st.subheader("📄 Result")
+    st.write("**Student Name:**", name)
+    st.write("**Subjects:**", subjects)
+    st.write("**Total Marks:**", total, "/", max_marks)
+    st.write("**Percentage:**", round(percentage, 2), "%")
+    st.write("**Grade:**", grade)
+    st.write("**Status:**", status)
+    st.write("**Feedback:**", feedback)
+    st.write("**Tips:**", tips)
